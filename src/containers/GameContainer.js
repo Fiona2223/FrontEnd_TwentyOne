@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
+import "../CSSFiles/GameContainer.css"
 
-const GameContainer = ({ leadPlayer, game }) => {
+const GameContainer = ({ leadPlayer, game, selectedMode, firstPlayerInMultiplayer }) => {
   const [userInput, setUserInput] = useState(0);
   const [counter, setCounter] = useState(0);
-  const [message, setMessage] = useState("guess a number");
+  const [message, setMessage] = useState("Guess a number");
   const [displayForm, setDisplayForm] = useState(true);
 
   // checks who starts the game
   useEffect(() => {
-    console.log(game);
     if (game && game.currentTotal > 0) {
       setCounter(game.currentTotal);
+      setMessage("Computer played " + game.currentTotal + "! your move...")  
     }
   }, [game]);
 
@@ -19,38 +20,70 @@ const GameContainer = ({ leadPlayer, game }) => {
     setUserInput(event.target.value);
   };
 
-//   
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    updateGame(game);
+    if(selectedMode ===  "singlePlayer"){
+      updateSinglePlayerGame(game);
+    } if (selectedMode === "multiPlayer"){
+      updateMultiPlayerGame(game);
+    }
     setMessage("Computer thinking...");
   };
 
-  const updateGame = async (updatedGame) => {
-    const response = await fetch(
-      `http://localhost:8080/games/${game.id}?playerId=${leadPlayer.id}&guess=${userInput}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    const jsonData = await response.json();
-    console.log(jsonData);
+    const updateSinglePlayerGame = async () => {
+      const response = await fetch(
+        `http://localhost:8080/games/${game.id}?playerId=${leadPlayer.id}&guess=${userInput}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
 
-    setTimeout(() => {
-      setCounter(jsonData.gameState);
-      setMessage(jsonData.message);
-    }, 1500);
-  };
+      setTimeout(() => {
+        setCounter(jsonData.gameState);
+        setMessage(jsonData.message);
+      }, 1500);
+    };
+
+    const updateMultiPlayerGame = async () => {
+      console.log(firstPlayerInMultiplayer);
+
+      let playerTurnId;
+      if(counter === 0){
+        playerTurnId = firstPlayerInMultiplayer;
+      }
+      if(counter !== 0){
+        playerTurnId = message.match("[0-9]+")[0];
+      } 
+
+      const response = await fetch(
+        `http://localhost:8080/games/${game.id}?playerId=${playerTurnId}&guess=${userInput}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+
+      setTimeout(() => {
+        setCounter(jsonData.gameState);
+        setMessage(jsonData.message);
+      }, 1500);
+    };
 
   return (
-    <>
-      <h3> Get ready to lose </h3>
-      <h4> {leadPlayer.name} </h4>
-      <h1>{counter}</h1>
+    <section className="Game_page">
+      <h3> Get ready to lose {leadPlayer.name}... </h3>
+      <h2>{counter}</h2>
+      <div className="message">
       {message}
+      </div>
+
       {displayForm ? (
-        <form onSubmit={handleFormSubmit}>
+        <form className="form" onSubmit={handleFormSubmit}>
           <input
             type="number"
             name="userInput"
@@ -63,7 +96,7 @@ const GameContainer = ({ leadPlayer, game }) => {
           <button type="submit"> submit</button>
         </form>
       ) : null}
-    </>
+    </section>
   );
 };
 

@@ -1,7 +1,7 @@
 .rules {
   background-color: #2a2727;
-  margin: 20px;
-  padding: 10px;
+  padding: 30px 15px;
+  margin: 10px 150px 10px 150px;
 }
 
 .rules > h4 {
@@ -12,17 +12,22 @@
 .rules > p {
   margin-top: 5px;
   margin-bottom: 0px;
+
 }
 
 .form > select {
-  font-size: 16px;
+  font-size: 20px;
   text-decoration: none;
   border: 3px solid;
-  padding: 0.25em 0.5em;
+  padding: 2px 3px;
+  margin: 3px;
 }
 
 .rules > ol {
   font-size: 14px;
   text-align: justify;
-  padding-top: 0;
+  display: table;
+  margin: 0 auto;
+   
 }
+

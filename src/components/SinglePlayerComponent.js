@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import singlePlayerPicture from "../assets/single_player.png";
+import "../CSSFiles/SinglePlayer.css";
 
 const SinglePlayerComponent = ({
   leadPlayer,
@@ -8,13 +10,14 @@ const SinglePlayerComponent = ({
   setIsNewGame,
   selectDifficulty,
   setSelectDifficulty,
+  handleGameType,
 }) => {
   const navigate = useNavigate();
 
-  const handleGameType = (event) => {
-    const selectedDifficulty = event.target.value;
-    setSelectDifficulty(selectedDifficulty);
-  };
+  // const handleGameType = (event) => {
+  //   const selectedDifficulty = event.target.value;
+  //   setSelectDifficulty(selectedDifficulty);
+  // };
 
   // for submitting new game in single player container
   const handleFormSubmit = (event) => {
@@ -80,6 +83,10 @@ const SinglePlayerComponent = ({
           <button type="submit">Start game!</button>
         </form>
       ) : null}
+
+      <div>
+        <img src={singlePlayerPicture} />
+      </div>
     </>
   );
 };
